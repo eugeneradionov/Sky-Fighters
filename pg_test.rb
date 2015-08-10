@@ -6,7 +6,6 @@ require 'json'
 require 'interface'
 require 'pg'
 
-load 'postgres_direct.rb'
 load 'pattern_strategy.rb'
 
 class Planes
@@ -20,7 +19,7 @@ class Planes
   attr_reader :name, :type, :nation, :epoch
 end
 urls = [
-    ['http://wp.scn.ru/ru/ww3/h/', 'Sea', 'Cold War'],
+    ['http://wp.scn.ru/en/ww3/h/', 'Sea', 'Cold War'],
 ]
 
 planes_regex = /<a\shref=(?<url>[^>]*)>(?<name>[^<]*)<\/a>\s?\[\d+\]<br>/
@@ -46,7 +45,7 @@ def best_nation(url, regex)
     array_of_nations = response_nations.scan(regex)
     return array_of_nations.max_by{|x| x.count.to_i}[0]
   rescue
-    return 'Другие'
+    return 'Other'
   end
 end
 
@@ -69,6 +68,9 @@ end
 time_download = (Time.now - start_download).to_i
 p "Fetched #{count_of_pages} pages in #{time_download} seconds."
 
-#Output into postgresql
-output = Output.new(PostgresqlOut.new)
+#Output into sqlite
+output = Output.new(SqliteOut.new)
+output.use_strategy('planes_sqlite', planes)
+
+output = Output.new(MysqlOut.new)
 output.use_strategy('planes', planes)

@@ -1,3 +1,8 @@
+require 'interface'
+load 'mysql_direct.rb'
+load 'postgres_direct.rb'
+load 'sqlite_direct.rb'
+
 #Pattern strategy
 OutputStrategy = interface {required_methods :use}
 
@@ -52,7 +57,7 @@ class PostgresqlOut
     begin
       postgre_out.new_table
       postgre_out.clear_table
-      postgre_out.query(array)
+      postgre_out.insert(array)
     rescue Exception => e
       p e.message
     ensure
@@ -60,6 +65,46 @@ class PostgresqlOut
     end
     time = (Time.now - start).to_i
     p "Export to PostgreSQL: committed #{array.size} records in #{time} seconds"
+  end
+  implements OutputStrategy
+end
+
+class MysqlOut
+  def use(database_name, array)
+    start = Time.now
+    mysql_out = MysqlDirect.new
+    mysql_out.connect(database_name)
+    begin
+      mysql_out.new_table
+      mysql_out.clear_table
+      mysql_out.insert(array)
+    rescue Exception => e
+      p e.message
+    ensure
+      mysql_out.disconnect
+    end
+    time = (Time.now - start).to_i
+    p "Export to MySQL: committed #{array.size} records in #{time} seconds"
+  end
+  implements OutputStrategy
+end
+
+class SqliteOut
+  def use(database_name, array)
+    start = Time.now
+    sqlite_out = SqliteDirect.new
+    sqlite_out.connect(database_name)
+    begin
+      sqlite_out.new_table
+      sqlite_out.clear_table
+      sqlite_out.insert(array)
+    rescue Exception => e
+      p e.message
+    ensure
+      sqlite_out.disconnect
+    end
+    time = (Time.now - start).to_i
+    p "Export to Sqlite: committed #{array.size} records in #{time} seconds"
   end
   implements OutputStrategy
 end

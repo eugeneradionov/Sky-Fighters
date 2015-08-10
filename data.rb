@@ -3,10 +3,7 @@
 require 'net/http'
 require 'uri'
 require 'json'
-require 'interface'
-require 'pg'
 
-load 'postgres_direct.rb'
 load 'pattern_strategy.rb'
 load 'planes.rb'
 
@@ -34,6 +31,14 @@ output.use_strategy('output.csv', planes)
 output = Output.new(JsonOut.new)
 output.use_strategy('jsonout.json', planes)
 
-#Output to postgresql
+#Output to Postgresql
 output = Output.new(PostgresqlOut.new)
 output.use_strategy('planes',planes)
+
+#Output to Mysql
+output = Output.new(MysqlOut.new)
+output.use_strategy('planes', planes)
+
+#Output into sqlite
+output = Output.new(SqliteOut.new)
+output.use_strategy('planes_sqlite', planes)

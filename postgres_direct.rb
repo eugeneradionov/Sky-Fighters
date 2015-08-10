@@ -1,3 +1,5 @@
+require 'pg'
+
 class PostgresDirect
 
   def connect(database_name)
@@ -17,7 +19,7 @@ epoch TEXT);")
     @conn.exec("TRUNCATE catalog;")
   end
 
-  def query(array)
+  def insert(array)
     @conn.transaction do |c|
       array.each do |x|
         c.exec( "INSERT INTO catalog (name, type, nation, epoch)
