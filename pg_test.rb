@@ -19,7 +19,7 @@ class Planes
   attr_reader :name, :type, :nation, :epoch
 end
 urls = [
-    ['http://wp.scn.ru/en/ww3/h/', 'Sea', 'Cold War'],
+    ['http://wp.scn.ru/ru/ww3/h/', 'Sea', 'Cold War'],
 ]
 
 planes_regex = /<a\shref=(?<url>[^>]*)>(?<name>[^<]*)<\/a>\s?\[\d+\]<br>/
